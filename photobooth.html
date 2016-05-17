@@ -1,50 +1,50 @@
-<!DOCTYPE html> 
-<html lang=en> 
-<head>  
-<meta charset=utf-8> 
-<meta http-equiv=X-UA-Compatible content="IE=edge"> 
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=X-UA-Compatible content="IE=edge">
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title> Photos </title>  
-<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<title> Rodolphe & Julie Wedding Photobooth </title>
+<script src="Javascript/jquery-1.12.3.min.js"></script>
 <script>
 
 var listImages = [];
 var listImagesName = [];
-  
-(function worker() { 
+
+(function worker() {
 	$.ajax({
-		url: 'http://localhost:8081/getImages',
+		url: 'http://localhost:8081/Images',
 		type: 'GET',
-		success: function(data){ 
+		success: function(data){
 			var images = jQuery.parseJSON(data);
 			var newImages = [];
-			
+
 			for (var prop in images) {
 				// skip loop if the property is from prototype
 				if(!images.hasOwnProperty(prop)) continue;
-				
+
 				if(listImagesName.indexOf(images[prop]) == -1) {
 					newImages.push(images[prop]);
 				}
 			}
-			
-			//préchargement des images		
+
+			//préchargement des images
 			for(var i=0; i<newImages.length; i++) {
 				var tempimg = new Image();
 				tempimg.src = "photostest/" + newImages[i];
-				listImages.push(tempimg);		
-				listImagesName.push(newImages[i]);		
+				listImages.push(tempimg);
+				listImagesName.push(newImages[i]);
 			}
-					
+
 			//console.log("listImages : ");
 			//console.log(listImages);
-			
+
 			//si on a une nouvelle image on l'affiche directement
 			//console.log(typeof(newImages[0]));
 			if(typeof(newImages[0]) != "undefined") {
 				$("#mainImage").attr("src", "photostest/" + newImages[0]);
 			}
-			
+
 		},
 		error: function(data) {
 		   $( ".result" ).html( "ERROR ! <br/>" );
@@ -56,26 +56,27 @@ var listImagesName = [];
 		}
 	});
 })();
- 
- 
+
+
 var ii = 0;
 function swapImage() {
    if (listImages.length>0) {
 	   console.log(listImages[ii]);
 	   console.log(listImages[ii].src);
 	   $("#mainImage").attr("src", listImages[ii].src);
-	   if(ii < listImages.length - 1) ii++; 
+	   if(ii < listImages.length - 1) ii++;
 	   else ii = 0;
 	}
    setTimeout("swapImage()",2000);
 }
 window.onload=swapImage;
 </script>
-</head>
-<body id="body">
-<ul id="filelist"></ul>
-<div class="result"></div>
 
-<img id="mainImage" src="photostest/IMG_2489.JPG" style="width:300px;" />
-</body>
+</head>
+  <body id="body">
+    <ul id="filelist"></ul>
+    <div class="result"></div>
+
+    <img id="mainImage" src="photostest/IMG_2489.JPG" style="width:300px;" />
+  </body>
 </html>

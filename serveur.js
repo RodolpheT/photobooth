@@ -7,6 +7,8 @@ var http = require('http');
 var serialport = require('serialport');       // include the serialport library
 var SERVER_PORT = 8081;
 
+console.log(process.env.GOPRO_PASSWORD);
+
 // configure the serial port:
 SerialPort = serialport.SerialPort,             // make a local instance of serialport
     portName = process.argv[2];					// get serial port name from the command line
@@ -38,11 +40,13 @@ function showPortOpen() {
   console.log('port open. Data rate: ' + myPort.options.baudRate);
 }
 
+password = process.env.GOPRO_PASSWORD;
 var options = {
 	  host: 'http://10.5.5.9',
-	  path: '/camera/SH?t=password&p=%01'
+	  path: '/camera/SH?t='+password+'&p=%01'
 	};
-	
+
+//when new serial data arrives, send GET request to GOPRO
 function takePicture() {
 	console.log('Sending GoPro picture request...');
 	var req = http.get(options, function(res) {
@@ -61,9 +65,11 @@ function showPortClose() {
 function showError(error) {
   console.log('Serial port error: ' + error);
 }
+// ------------------------
 
+//Creating the server to send list of images to web app
 var server = http.createServer(function(req, res) {
-  
+
 	var images = [];
 	var request = url.parse(req.url).pathname;
 	var contentTypesByExtension = {
@@ -73,20 +79,20 @@ var server = http.createServer(function(req, res) {
 		'.jpg':   "image/jpeg",
 		'.JPG':   "image/jpeg"
 	  };
-	  
+
 	var filename = path.join(process.cwd(), request);
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-	
+
 	var pathDir = "./photostest"
-	 
-	/* URL pour lire les photos : / */	 
-	if (request == "/getImages") {
-		
+
+	/* URL pour lire les photos : / */
+	if (request == "/Images") {
+
 		fs.readdir(pathDir, function(err, items) {
 		res.write("[");
-		 
+
 			for (var i=0; i<items.length; i++) {
 				res.write('"' +  items[i] + '"');
 				if(i < items.length - 1) {
@@ -94,7 +100,7 @@ var server = http.createServer(function(req, res) {
 				}
 			}
 		res.write("]");
-		res.end();	
+		res.end();
 		});
 	/* renvoie la page demandée */
 	} else {
@@ -102,9 +108,9 @@ var server = http.createServer(function(req, res) {
 			var headers = {};
 			var contentType = contentTypesByExtension[path.extname(filename)];
 			if (contentType) headers["Content-Type"] = contentType;
-			
+
 			/*var contentType = request == "/photobooth.html" ? "text/html" : "image/jpeg";*/
-			request = "./" + request;		
+			request = "./" + request;
 			fs.readFile(decodeURIComponent(request), 'binary', function(err, content){
 				if (content != null && content != '' ){
 					headers["Content-Length"] = content.length;
@@ -113,7 +119,7 @@ var server = http.createServer(function(req, res) {
 				}
 				if(err!=null) console.log(err);
 				res.end();
-			});		
+			});
 		}
 	}
 });
