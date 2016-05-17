@@ -39,7 +39,7 @@ function showPortOpen() {
 
 var options = {
 	  host: 'http://10.5.5.9',
-	  path: '/camera/SH?t=G2ST4G22&p=%01'
+	  path: '/camera/SH?t=password&p=%01'
 	};
 	
 function takePicture() {
