@@ -36,11 +36,11 @@ var listImagesName = [];
 				listImagesName.push(newImages[i]);		
 			}
 					
-			console.log("listImages : ");
-			console.log(listImages);
+			//console.log("listImages : ");
+			//console.log(listImages);
 			
 			//si on a une nouvelle image on l'affiche directement
-			console.log(typeof(newImages[0]));
+			//console.log(typeof(newImages[0]));
 			if(typeof(newImages[0]) != "undefined") {
 				$("#mainImage").attr("src", "photostest/" + newImages[0]);
 			}
@@ -57,6 +57,19 @@ var listImagesName = [];
 	});
 })();
  
+ 
+var ii = 0;
+function swapImage() {
+   if (listImages.length>0) {
+	   console.log(listImages[ii]);
+	   console.log(listImages[ii].src);
+	   $("#mainImage").attr("src", listImages[ii].src);
+	   if(ii < listImages.length - 1) ii++; 
+	   else ii = 0;
+	}
+   setTimeout("swapImage()",2000);
+}
+window.onload=swapImage;
 </script>
 </head>
 <body id="body">

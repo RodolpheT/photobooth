@@ -2,6 +2,7 @@
 var fs = require('fs');
 var http = require('http');
 var url = require('url');
+var path = require('path');
 var http = require('http');
 var serialport = require('serialport');       // include the serialport library
 var SERVER_PORT = 8081;
@@ -65,26 +66,25 @@ var server = http.createServer(function(req, res) {
   
 	var images = [];
 	var request = url.parse(req.url).pathname;
-	
+	var contentTypesByExtension = {
+		'.html': "text/html",
+		'.css':  "text/css",
+		'.js':   "text/javascript",
+		'.jpg':   "image/jpeg",
+		'.JPG':   "image/jpeg"
+	  };
+	  
+	var filename = path.join(process.cwd(), request);
+
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET');
 	
-	/*
-	// Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost.local');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    
-	res.setHeader('Content-Type', 'text/html');
-	*/
-	/*var path = "E:\Mes documents\Perso\Rodolphe\Photobooth Javascript\photostest";*/
-	var path = "./photostest"
+	var pathDir = "./photostest"
 	 
 	/* URL pour lire les photos : / */	 
 	if (request == "/getImages") {
 		
-		fs.readdir(path, function(err, items) {
+		fs.readdir(pathDir, function(err, items) {
 		res.write("[");
 		 
 			for (var i=0; i<items.length; i++) {
@@ -99,13 +99,16 @@ var server = http.createServer(function(req, res) {
 	/* renvoie la page demandée */
 	} else {
 		if (request.indexOf("favicon") <= -1) {
-			var contentType = request == "/photobooth.html" ? "text/html" : "image/jpeg";
-			console.log("!!!" + contentType);
+			var headers = {};
+			var contentType = contentTypesByExtension[path.extname(filename)];
+			if (contentType) headers["Content-Type"] = contentType;
+			
+			/*var contentType = request == "/photobooth.html" ? "text/html" : "image/jpeg";*/
 			request = "./" + request;		
 			fs.readFile(decodeURIComponent(request), 'binary', function(err, content){
 				if (content != null && content != '' ){
-					
-					res.writeHead(200, {'Content-Length':content.length, 'Content-type':contentType});
+					headers["Content-Length"] = content.length;
+					res.writeHead(200, headers);
 					res.write(content, "binary");
 				}
 				if(err!=null) console.log(err);
