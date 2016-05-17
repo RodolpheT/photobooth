@@ -1,2 +1,2 @@
 # photobooth
-Wedding photobooth (Gorpo, Computer, Arduino, Node.JS, Python)
+Wedding photobooth (Gopro, Computer, Arduino, Node.JS, Python)
