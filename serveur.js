@@ -67,6 +67,7 @@ function showError(error) {
 }
 // ------------------------
 
+
 //Creating the server to send list of images to web app
 var server = http.createServer(function(req, res) {
 
@@ -82,23 +83,36 @@ var server = http.createServer(function(req, res) {
 
 	var filename = path.join(process.cwd(), request);
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
+  // Request methods you wish to allow
+  //res.setHeader('Access-Control-Allow-Methods', 'GET');
 
 	var pathDir = "./photostest"
 
 	/* URL pour lire les photos : / */
 	if (request == "/Images") {
 
+  var numberOfImages = 0;
 		fs.readdir(pathDir, function(err, items) {
 		res.write("[");
 
-			for (var i=0; i<items.length; i++) {
-				res.write('"' +  items[i] + '"');
-				if(i < items.length - 1) {
-					res.write(',');
-				}
-			}
+    //counting all .JPG images in the folder
+    numberOfImages = 0;
+    for (var file of items){
+      if(file.indexOf(".JPG") > -1){
+        numberOfImages++;
+      }
+    }
+
+    //writing all .JPG images to the JSON response
+		for (var i=0; i<items.length; i++) {
+      if(items[i].indexOf(".JPG") > -1){
+  			res.write('"' +  items[i] + '"');
+  			if(i < numberOfImages) {
+  				res.write(',');
+        }
+      }
+    }
+
 		res.write("]");
 		res.end();
 		});
