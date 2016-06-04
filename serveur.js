@@ -104,10 +104,10 @@ var server = http.createServer(function(req, res) {
     }
 
     //writing all .JPG images to the JSON response
-		for (var i=0; i<items.length; i++) {
+	for (var i=0; i<items.length; i++) {
       if(items[i].indexOf(".JPG") > -1){
   			res.write('"' +  items[i] + '"');
-  			if(i < numberOfImages) {
+  			if(i < numberOfImages-1) {
   				res.write(',');
         }
       }
