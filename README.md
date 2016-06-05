@@ -5,7 +5,7 @@ Wedding photobooth (Gopro, Computer, Arduino, Node.JS, Python)
 
 * Git clone
 * `npm install serialport`
-* `node serveur.js <serial port>`
+* `node serveur.js <serial port>` (for Windows: `<serial port>` = `COMxx`)
 * Open browser and navigate to `http://localhost:8081/photobooth.html`
 
 
