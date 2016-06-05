@@ -31,7 +31,7 @@ var listImagesName = [];
 			//préchargement des images
 			for(var i=0; i<newImages.length; i++) {
 				var tempimg = new Image();
-				tempimg.src = "photostest/" + newImages[i];
+				tempimg.src = "pictures/" + newImages[i];
 				listImages.push(tempimg);
 				listImagesName.push(newImages[i]);
 			}
@@ -42,7 +42,7 @@ var listImagesName = [];
 			//si on a une nouvelle image on l'affiche directement
 			//console.log(typeof(newImages[0]));
 			if(typeof(newImages[0]) != "undefined") {
-				$("#mainImage").attr("src", "photostest/" + newImages[0]);
+				$("#mainImage").attr("src", "pictures/" + newImages[0]);
 			}
 
 		},
@@ -77,6 +77,6 @@ window.onload=swapImage;
     <ul id="filelist"></ul>
     <div class="result"></div>
 
-    <img id="mainImage" src="photostest/IMG_2489.JPG" style="width:300px;" />
+    <img id="mainImage" src="pictures/IMG_2489.JPG" style="height:100%;width:100%" />
   </body>
 </html>

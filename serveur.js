@@ -26,6 +26,7 @@ if (typeof portName === "undefined") {
   process.exit(1);
 }
 // open the serial port:
+console.log("Opening serial port " + portName);
 var myPort = new SerialPort(portName, serialOptions);
 
 // set up event listeners for the serial events:
@@ -37,12 +38,12 @@ myPort.on('error', showError);
 // ------------------------ Serial event functions:
 // this is called when the serial port is opened:
 function showPortOpen() {
-  console.log('port open. Data rate: ' + myPort.options.baudRate);
+  console.log('Port open. Data rate: ' + myPort.options.baudRate);
 }
 
 password = process.env.GOPRO_PASSWORD;
 var options = {
-	  host: 'http://10.5.5.9',
+	  host: '10.5.5.9',
 	  path: '/camera/SH?t='+password+'&p=%01'
 	};
 
@@ -59,7 +60,7 @@ function takePicture() {
 }
 
 function showPortClose() {
-   console.log('port closed.');
+   console.log('Port closed.');
 }
 // this is called when the serial port has an error:
 function showError(error) {
@@ -86,7 +87,7 @@ var server = http.createServer(function(req, res) {
   // Request methods you wish to allow
   //res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-	var pathDir = "./photostest"
+	var pathDir = "./pictures"
 
 	/* URL pour lire les photos : / */
 	if (request == "/Images") {
