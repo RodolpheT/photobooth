@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="en" style="">
 <head>
 <meta charset=utf-8>
 <meta http-equiv=X-UA-Compatible content="IE=edge">
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title> Rodolphe & Julie Wedding Photobooth </title>
+
+<style type="text/css">
+	html { background-color: black; }
+	#slideshow { display:none; margin:auto;width:100px; height:100px; background:#1D1B1A; }
+	#slideshow img {border-radius:10px;}
+</style>
 <script src="Javascript/jquery-1.12.3.min.js"></script>
+<script src="Javascript/backstretch.js"></script>
 <script>
 
 var listImages = [];
 var listImagesName = [];
+var listImagesNameBackstretch = [];
 
 (function worker() {
 	$.ajax({
@@ -34,22 +42,31 @@ var listImagesName = [];
 				tempimg.src = "pictures/" + newImages[i];
 				listImages.push(tempimg);
 				listImagesName.push(newImages[i]);
+				listImagesNameBackstretch.unshift("pictures/" + newImages[i]);
 			}
 
-			//console.log("listImages : ");
-			//console.log(listImages);
 
 			//si on a une nouvelle image on l'affiche directement
 			//console.log(typeof(newImages[0]));
+			
 			if(typeof(newImages[0]) != "undefined") {
+				/*
 				$("#mainImage").attr("src", "pictures/" + newImages[0]);
 				setTimeout(worker, 6000);
+				*/
+				
+				console.log("listImages : ");
+				console.log(listImagesNameBackstretch);
+				/*$("#slideshow").backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});*/
+				$.backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});
 			}
+			
+			
 
 		},
 		error: function(data) {
 		   $( ".result" ).html( "ERROR ! <br/>" );
-		   console.log(data);
+		   /*console.log(data);*/
 		},
 		complete: function() {
 		  // Schedule the next request when the current one's complete
@@ -58,26 +75,58 @@ var listImagesName = [];
 	});
 })();
 
-
+/*
 var ii = 0;
 function swapImage() {
    if (listImages.length>0) {
-	   console.log(listImages[ii]);
+	   
 	   console.log(listImages[ii].src);
-	   $("#mainImage").attr("src", listImages[ii].src);
+	   //$("#mainImage").attr("src", listImages[ii].src);
+	   $("html").css("background-image", "url(" + listImages[ii].src + ")")
 	   if(ii < listImages.length - 1) ii++;
 	   else ii = 0;
 	}
    setTimeout("swapImage()",2000);
 }
-window.onload=swapImage;
-</script>
+*/
+/*window.onload=swapImage;*/
 
+$(document).ready(function(){
+   var $slideshow = $('#slideshow'),
+		imageWidth = 4000, 
+		imageHeight = 3000
+		maxWidth = $(window).width(),
+		maxHeight = $(window).height(),
+		widthRatio = maxWidth / imageWidth,
+		heightRatio = maxHeight / imageHeight;
+
+	var ratio = widthRatio; //default to the width ratio until proven wrong
+
+	if (widthRatio * imageHeight > maxHeight) {
+		ratio = heightRatio;
+	}
+	
+	ratio = ratio * 0.97;
+	console.log(ratio);
+	console.log("maxwidth : " + maxWidth);
+	console.log("maxheight : " + maxHeight);
+	var finalWidth = imageWidth * ratio;
+	var finalHeight = imageHeight* ratio;
+	//now resize the image relative to the ratio
+	$("#slideshow").width(finalWidth);
+	$("#slideshow").height(finalHeight);
+	console.log("finalwidth : " + finalWidth);
+	console.log("finalHeight : " + finalHeight);
+	console.log("wdith : " + $("#slideshow").width()); 
+	console.log("height : " + $("#slideshow").height()); 
+});
+
+	
+</script>
 </head>
   <body id="body">
-    <ul id="filelist"></ul>
-    <div class="result"></div>
-
-    <img id="mainImage" src="pictures/IMG_2489.JPG" style="height:100%;width:100%" />
+    
+	<div id="slideshow">&nbsp;</div>
+    <!--<img id="mainImage" src="pictures/IMG_2489.JPG" style="" />-->
   </body>
 </html>
