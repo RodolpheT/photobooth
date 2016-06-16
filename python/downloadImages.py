@@ -4,14 +4,14 @@ import time
 from shutil import copyfile
 import os
 
+print "Photobooth - Download GoPro images script. Started..."
+
 while True:
     time.sleep(0.05)
     response = urllib2.urlopen('http://10.5.5.9:8080/videos/DCIM/102GOPRO/')
     html = response.read()
     soup = BeautifulSoup(html)
     dirlist = os.listdir('C:/Users/rtoyer.LAP-PAR-RTOYER2/Desktop/photobooth/photobooth/pictures')
-    print "Checking for new content..."
-    #time.sleep(1)
     for lowResImage in soup.findAll('span','size'):
         if lowResImage.getText() == "1":
             newImage = lowResImage.parent.parent.find('a').get('href')
