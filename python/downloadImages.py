@@ -5,7 +5,7 @@ from shutil import copyfile
 import os
 
 while True:
-    time.sleep(0.5)
+    time.sleep(0.05)
     response = urllib2.urlopen('http://10.5.5.9:8080/videos/DCIM/102GOPRO/')
     html = response.read()
     soup = BeautifulSoup(html)
