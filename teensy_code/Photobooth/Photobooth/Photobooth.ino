@@ -67,7 +67,8 @@ class NeoPatterns : public Adafruit_NeoPixel
 //                    ActivePattern = RAINBOW_CYCLE;
 //                    Interval = 10;
 //                    RainbowCycleUpdate();
-                    RainbowCycle(10,FORWARD);
+                    //RainbowCycle(10,FORWARD);
+                    OnComplete();
                     break;                    
                 default:
                     break;
@@ -356,7 +357,7 @@ void loop() {
     if(!digitalRead(PIN_BUTTON)){
         // Switch Ring1 to FASE pattern
         Ring1.ColorSet(Ring1.Color(0,0,0));
-        Ring1.ColorWipe(Ring1.Color(255,0,0),40,FORWARD);
+        Ring1.ColorWipe(Ring1.Color(0,0,255),40,FORWARD);
     }
   }
    
@@ -365,13 +366,18 @@ void loop() {
 // Ring1 Completion Callback
 void Ring1Complete()
 {   
-    if (Ring1.ActivePattern == COLOR_WIPE)  // If we just ended the color wipe, flash ring for picture
+    if (Ring1.ActivePattern == COLOR_WIPE && Ring1.Blue(Ring1.Color1)==255)  // If we just ended the color wipe, flash ring for picture
     {
         Ring1.Flash();
     }
+    else if (Ring1.ActivePattern == FLASH)
+    {
+        Ring1.ColorSet(Ring1.Color(0,255,0));
+        Ring1.ColorWipe(Ring1.Color(255,0,0),90,FORWARD);
+    }
     else
     {
-      //Ring1.Reverse();
+        Ring1.RainbowCycle(10);
     }
 }
 
