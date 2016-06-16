@@ -8,7 +8,7 @@
 #define PIN_BUTTON 2
 
 // Pattern types supported:
-enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE };
+enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE, FLASH };
 // Patern directions supported:
 enum  direction { FORWARD, REVERSE };
  
@@ -23,6 +23,8 @@ class NeoPatterns : public Adafruit_NeoPixel
     
     unsigned long Interval;   // milliseconds between updates
     unsigned long lastUpdate; // last update of position
+
+    int Brightness = 10;
     
     uint32_t Color1, Color2;  // What colors are in use
     uint16_t TotalSteps;  // total number of steps in the pattern
@@ -34,6 +36,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     NeoPatterns(uint16_t pixels, uint8_t pin, uint8_t type, void (*callback)())
     :Adafruit_NeoPixel(pixels, pin, type)
     {
+        setBrightness(Brightness);
         OnComplete = callback;
     }
     
@@ -60,6 +63,13 @@ class NeoPatterns : public Adafruit_NeoPixel
                 case FADE:
                     FadeUpdate();
                     break;
+                case FLASH:
+//                    ActivePattern = RAINBOW_CYCLE;
+//                    Interval = 10;
+//                    RainbowCycleUpdate();
+                    //RainbowCycle(10,FORWARD);
+                    OnComplete();
+                    break;                    
                 default:
                     break;
             }
@@ -72,6 +82,9 @@ class NeoPatterns : public Adafruit_NeoPixel
         if (Direction == FORWARD)
         {
            Index++;
+           if (Index == 45 && ActivePattern == COLOR_WIPE) {
+                   Serial.println("PictureRequest");
+           }
            if (Index >= TotalSteps)
             {
                 Index = 0;
@@ -245,7 +258,18 @@ class NeoPatterns : public Adafruit_NeoPixel
         uint32_t dimColor = Color(Red(color) >> 1, Green(color) >> 1, Blue(color) >> 1);
         return dimColor;
     }
- 
+    
+    // All pixels white for 4 seconds
+    void Flash()
+    {
+        ActivePattern = FLASH;
+        for (int i = 0; i < numPixels(); i++)
+        {
+            setPixelColor(i, Color(255,255,255));
+        }
+        show();
+        Interval = 3000;
+    }
     // Set all pixels to a color (synchronously)
     void ColorSet(uint32_t color)
     {
@@ -296,10 +320,12 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 };
 
- 
+
+void Ring1Complete();
+
 // Define some NeoPatterns for the two rings and the stick
 //  as well as some completion routines
-NeoPatterns Ring1(60, PIN_LEDRINGFLASH, NEO_RGBW + NEO_KHZ800,NULL);
+NeoPatterns Ring1(60, PIN_LEDRINGFLASH, NEO_RGBW + NEO_KHZ800,&Ring1Complete);
 
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN_LEDRINGFLASH, NEO_RGBW + NEO_KHZ800);
 int buttonState = 0; 
@@ -326,16 +352,33 @@ void loop() {
   // Update the rings.
   Ring1.Update();
   
-  if (!digitalRead(PIN_BUTTON)) {
+  if (!digitalRead(PIN_BUTTON)&&Ring1.ActivePattern==RAINBOW_CYCLE) {
     delay(50);
     if(!digitalRead(PIN_BUTTON)){
         // Switch Ring1 to FASE pattern
-        Ring1.ActivePattern = COLOR_WIPE;
-        Ring1.Color(255,0,0)
-        Ring1.Interval = 20;
+        Ring1.ColorSet(Ring1.Color(0,0,0));
+        Ring1.ColorWipe(Ring1.Color(0,0,255),40,FORWARD);
     }
   }
    
+}
+
+// Ring1 Completion Callback
+void Ring1Complete()
+{   
+    if (Ring1.ActivePattern == COLOR_WIPE && Ring1.Blue(Ring1.Color1)==255)  // If we just ended the color wipe, flash ring for picture
+    {
+        Ring1.Flash();
+    }
+    else if (Ring1.ActivePattern == FLASH)
+    {
+        Ring1.ColorSet(Ring1.Color(0,255,0));
+        Ring1.ColorWipe(Ring1.Color(255,0,0),90,FORWARD);
+    }
+    else
+    {
+        Ring1.RainbowCycle(10);
+    }
 }
 
 void buttonPressedSequence(){

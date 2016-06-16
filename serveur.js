@@ -7,7 +7,10 @@ var http = require('http');
 var serialport = require('serialport');       // include the serialport library
 var SERVER_PORT = 8081;
 
-console.log(process.env.GOPRO_PASSWORD);
+var goProHighRes = false;
+
+var password = process.env.GOPRO_PASSWORD;
+console.log(password);
 
 // configure the serial port:
 SerialPort = serialport.SerialPort,             // make a local instance of serialport
@@ -35,28 +38,87 @@ myPort.on('data', takePicture);
 myPort.on('close', showPortClose);
 myPort.on('error', showError);
 
+
+function set5MP(){
+
+	//Resolution: 5 Mpx
+	options = {
+	  host: '10.5.5.9',
+	  path: '/camera/PR?t='+password+'&p=%03'
+	};
+	console.log('GoPro Mode 5MPX');
+	req = http.get(options, function(res) {
+	  console.log('STATUS: ' + res.statusCode);
+	});
+	
+	req.on('error', function(e) {
+	  console.log('ERROR: ' + e.message);
+	});
+	
+	goProHighRes = false;
+
+}
+
 // ------------------------ Serial event functions:
 // this is called when the serial port is opened:
 function showPortOpen() {
-  console.log('Port open. Data rate: ' + myPort.options.baudRate);
-}
 
-password = process.env.GOPRO_PASSWORD;
-var options = {
+	//Set gopro in picture mode (video mode is by default when gopro is turned on)
+	var options = {
 	  host: '10.5.5.9',
-	  path: '/camera/SH?t='+password+'&p=%01'
+	  path: '/camera/CM?t='+password+'&p=%01'
 	};
-
-//when new serial data arrives, send GET request to GOPRO
-function takePicture() {
-	console.log('Sending GoPro picture request...');
+	console.log('Setting GoPro in PICTURE mode...');
 	var req = http.get(options, function(res) {
 	  console.log('STATUS: ' + res.statusCode);
 	});
 
+	console.log('Serial port open. Data rate: ' + myPort.options.baudRate);
+	setTimeout(set5MP,200);
+}
+
+function set12MP(){
+		
+	//Resolution: 12 Mpx Wide
+	options = {
+	  host: '10.5.5.9',
+	  path: '/camera/PR?t='+password+'&p=%05'
+	};
+	console.log('GoPro Mode 12Mpx');
+	req = http.get(options, function(res) {
+	  console.log('STATUS: ' + res.statusCode);
+	});
+	
+	goProHighRes = true;
+	setTimeout(takePicture,500);
+}
+//when new serial data arrives, send GET request to GOPRO
+function takePicture() {
+	
+	//Take Picture
+	options = {
+	  host: '10.5.5.9',
+	  path: '/camera/SH?t='+password+'&p=%01'
+	};
+	console.log('Sending GoPro picture request...');
+	req = http.get(options, function(res) {
+	  console.log('STATUS: ' + res.statusCode);
+	});
+	
 	req.on('error', function(e) {
 	  console.log('ERROR: ' + e.message);
 	});
+	
+	if (goProHighRes) {
+		//If 12 Mpx enabled, then set back to 5 Mpx to get ready for next picture
+		//set5MP();
+		setTimeout(set5MP,3000);
+	}
+	else {
+		//If low resolution enabled, then call set12MP to switch to high resolution
+		setTimeout(set12MP,1100);
+	}
+
 }
 
 function showPortClose() {
