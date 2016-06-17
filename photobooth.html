@@ -8,8 +8,7 @@
 
 <style type="text/css">
 	html { background-color: black; }
-		#slideshow { display:none; margin:auto;width:100px; height:100px; background:#1D1B1A; }
-<!--		#slideshow { margin:auto;width:100px; height:100px; background:#1D1B1A; } -->
+		#slideshow { /*display:none;*/ margin:auto;width:100px; height:100px; background:#1D1B1A; }
 	#slideshow img {border-radius:10px;}
 </style>
 <script src="Javascript/jquery-1.12.3.min.js"></script>
@@ -37,11 +36,19 @@ var listImagesNameBackstretch = [];
 				}
 			}
 
+			//on mélange le tableau des images existantes si on a une nouvelle image à ajouter 
+			if(typeof(newImages[0]) != "undefined") {
+				console.log("nouvelle image, on mélange le tableau ! Avant : ");
+				console.log(listImagesNameBackstretch);
+				shuffle(listImagesNameBackstretch);
+				console.log("après :")
+				console.log(listImagesNameBackstretch);			
+			}
 			//préchargement des images
 			for(var i=0; i<newImages.length; i++) {
 				var tempimg = new Image();
 				tempimg.src = "pictures/" + newImages[i];
-				listImages.push(tempimg);
+				/*listImages.push(tempimg);*/
 				listImagesName.push(newImages[i]);
 				listImagesNameBackstretch.unshift("pictures/" + newImages[i]);
 			}
@@ -56,10 +63,10 @@ var listImagesNameBackstretch = [];
 				setTimeout(worker, 6000);
 				*/
 				
-				console.log("listImages : ");
+				console.log("listImagesNameBackstretch : ");
 				console.log(listImagesNameBackstretch);
-				/*$("#slideshow").backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});*/
-				$.backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});
+				$("#slideshow").backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});
+				/*$.backstretch(listImagesNameBackstretch, {duration: 3000, fade: 750});*/
 			}
 			
 			
@@ -91,6 +98,19 @@ function swapImage() {
 }
 */
 /*window.onload=swapImage;*/
+
+function shuffle (array) {
+  var i = 0
+    , j = 0
+    , temp = null
+
+  for (i = array.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1))
+    temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+}
 
 $(document).ready(function(){
    var $slideshow = $('#slideshow'),
