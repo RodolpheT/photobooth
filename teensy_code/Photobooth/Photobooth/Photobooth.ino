@@ -24,7 +24,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     unsigned long Interval;   // milliseconds between updates
     unsigned long lastUpdate; // last update of position
 
-    int Brightness = 10;
+    int Brightness = 150;
     
     uint32_t Color1, Color2;  // What colors are in use
     uint16_t TotalSteps;  // total number of steps in the pattern
@@ -263,9 +263,11 @@ class NeoPatterns : public Adafruit_NeoPixel
     void Flash()
     {
         ActivePattern = FLASH;
+        setBrightness(255);
         for (int i = 0; i < numPixels(); i++)
         {
-            setPixelColor(i, Color(255,255,255));
+            //setPixelColor(i, Color(255,255,255));
+            setPixelColor(i, Color(0,0,0,255));
         }
         show();
         Interval = 3000;
