@@ -24,7 +24,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     unsigned long Interval;   // milliseconds between updates
     unsigned long lastUpdate; // last update of position
 
-    int Brightness = 150;
+    int Brightness = 12;
     
     uint32_t Color1, Color2;  // What colors are in use
     uint16_t TotalSteps;  // total number of steps in the pattern
@@ -68,6 +68,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 //                    Interval = 10;
 //                    RainbowCycleUpdate();
                     //RainbowCycle(10,FORWARD);
+                    setBrightness(Brightness);
                     OnComplete();
                     break;                    
                 default:
@@ -82,7 +83,7 @@ class NeoPatterns : public Adafruit_NeoPixel
         if (Direction == FORWARD)
         {
            Index++;
-           if (Index == 45 && ActivePattern == COLOR_WIPE) {
+           if (Index == 55 && ActivePattern == COLOR_WIPE && Red(Color1) == 0) {
                    Serial.println("PictureRequest");
            }
            if (Index >= TotalSteps)
@@ -124,13 +125,12 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
     
     // Initialize for a RainbowCycle
-    void RainbowCycle(uint8_t interval, direction dir = FORWARD)
+    void RainbowCycle(uint8_t interval)
     {
         ActivePattern = RAINBOW_CYCLE;
         Interval = interval;
         TotalSteps = 255;
         Index = 0;
-        Direction = dir;
     }
     
     // Update the Rainbow Cycle Pattern
@@ -264,13 +264,15 @@ class NeoPatterns : public Adafruit_NeoPixel
     {
         ActivePattern = FLASH;
         setBrightness(255);
+
         for (int i = 0; i < numPixels(); i++)
         {
             //setPixelColor(i, Color(255,255,255));
             setPixelColor(i, Color(0,0,0,255));
         }
+        setPixelColor(14, Color(255,255,255,0));
         show();
-        Interval = 3000;
+        Interval = 600;
     }
     // Set all pixels to a color (synchronously)
     void ColorSet(uint32_t color)
@@ -345,7 +347,7 @@ void setup() {
 
   // Initialize all the pixelStrips
   Ring1.begin();
-  Ring1.RainbowCycle(10);
+  Ring1.RainbowCycle(13);
   
 }
 
@@ -357,7 +359,7 @@ void loop() {
   if (!digitalRead(PIN_BUTTON)&&Ring1.ActivePattern==RAINBOW_CYCLE) {
     delay(50);
     if(!digitalRead(PIN_BUTTON)){
-        // Switch Ring1 to FASE pattern
+        // Switch Ring1 to ColorWipe pattern
         Ring1.ColorSet(Ring1.Color(0,0,0));
         Ring1.ColorWipe(Ring1.Color(0,0,255),40,FORWARD);
     }
@@ -375,31 +377,13 @@ void Ring1Complete()
     else if (Ring1.ActivePattern == FLASH)
     {
         Ring1.ColorSet(Ring1.Color(0,255,0));
-        Ring1.ColorWipe(Ring1.Color(255,0,0),90,FORWARD);
+        Ring1.ColorWipe(Ring1.Color(255,0,0),40,FORWARD);
     }
     else
-    {
-        Ring1.RainbowCycle(10);
+    {   
+        Ring1.RainbowCycle(13);
+        Ring1.Reverse();
     }
 }
 
-void buttonPressedSequence(){
-//  fullColor(strip.Color(0,0,0));
-//  delay(200);
-//  fullColor(strip.Color(255,0,0));
-//  delay(200);
-//  fullColor(strip.Color(0,0,0));
-//  delay(200);
-//  fullColor(strip.Color(255,0,0));
-//  delay(200);
-//  fullColor(strip.Color(0,0,0));
-//  delay(200);
-//  fullColor(strip.Color(255,0,0));
-//  colorWipe(strip.Color(0,0, 0), 70); // Green
-//  //strip.setBrightness(200);
-//  fullColor(strip.Color(255,255,255));
-//  delay(100);
-//  Serial.println("PictureRequest"); 
-  delay(2000);
-}
 

@@ -74,7 +74,7 @@ function showPortOpen() {
 	});
 
 	console.log('Serial port open. Data rate: ' + myPort.options.baudRate);
-	setTimeout(set5MP,200);
+	setTimeout(set12MP,200);
 }
 
 function set12MP(){
@@ -90,7 +90,7 @@ function set12MP(){
 	});
 	
 	goProHighRes = true;
-	setTimeout(takePicture,500);
+	//setTimeout(takePicture,500);
 }
 //when new serial data arrives, send GET request to GOPRO
 function takePicture() {
@@ -109,7 +109,7 @@ function takePicture() {
 	  console.log('ERROR: ' + e.message);
 	});
 	
-	if (goProHighRes) {
+/*	if (goProHighRes) {
 		//If 12 Mpx enabled, then set back to 5 Mpx to get ready for next picture
 		//set5MP();
 		setTimeout(set5MP,3000);
@@ -118,7 +118,7 @@ function takePicture() {
 		//If low resolution enabled, then call set12MP to switch to high resolution
 		setTimeout(set12MP,1100);
 	}
-
+*/
 }
 
 function showPortClose() {
