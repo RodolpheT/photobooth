@@ -4,8 +4,8 @@
   #include <avr/power.h>
 #endif
 
-#define PIN_LEDRINGFLASH 17
-#define PIN_BUTTON 2
+#define PIN_LEDRINGFLASH 22
+#define PIN_BUTTON 20
 
 // Pattern types supported:
 enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE, FLASH };
@@ -127,6 +127,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Initialize for a RainbowCycle
     void RainbowCycle(uint8_t interval)
     {
+      PowerReviews();
         ActivePattern = RAINBOW_CYCLE;
         Interval = interval;
         TotalSteps = 255;
@@ -149,26 +150,33 @@ class NeoPatterns : public Adafruit_NeoPixel
     {
         for(int i=0; i< 5; i++)
         {
-            setPixelColor(i, Color(0,255,50,0));
+            setPixelColor(i, Color(255,0,0,0));
         }
-        for(i=6; i< 16; i++)
+        for(int i=5; i< 16; i++)
         {
-            setPixelColor(i, Color(0,10,255,0));
+            setPixelColor(i, Color(10,0,255,0));
         }
-        for(i=17; i< 30; i++)
+        for(int i=16; i< 30; i++)
         {
-            setPixelColor(i, Color(255,165,0,0));
+            setPixelColor(i, Color(140,255,0,0));
         }
-        for(i=31; i< 50; i++)
+        for(int i=30; i< 50; i++)
         {
-            setPixelColor(i, Color(135,206,250,0));
+            setPixelColor(i, Color(206,135,250,0));
         }
-        for(i=51; i< 59; i++)
+        for(int i=50; i< 56; i++)
         {
-            setPixelColor(i, Color(0,255,50,0));
+            setPixelColor(i, Color(0,255,0,0));
+        }
+        for(int i=56; i< 60; i++)
+        {
+            setPixelColor(i, Color(255,0,0,0));
         }
 
         show();
+        
+        delay(10000);
+  
 
     }
  
@@ -380,10 +388,6 @@ void setup() {
 }
 
 void loop() {
-
-  Ring1.PowerReviews();
-
-  delay(10000);
 
   // Update the rings.
   Ring1.Update();
