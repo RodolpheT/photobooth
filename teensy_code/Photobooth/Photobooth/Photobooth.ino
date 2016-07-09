@@ -5,7 +5,7 @@
 #endif
 
 #define PIN_LEDRINGFLASH 22
-#define PIN_BUTTON 20
+#define PIN_BUTTON 19
 
 // Pattern types supported:
 enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE, FLASH };
@@ -127,7 +127,6 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Initialize for a RainbowCycle
     void RainbowCycle(uint8_t interval)
     {
-      PowerReviews();
         ActivePattern = RAINBOW_CYCLE;
         Interval = interval;
         TotalSteps = 255;
